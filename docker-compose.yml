@@ -1,28 +1,25 @@
+networks:
+  external_access:
+    external: true
+
 services:
   password-generator:
     build: .
     container_name: password-generator
-    restart: unless-stopped
-    # Direct access (e.g. http://<host-ip>:52931). Safe to remove entirely
-    # once Traefik is routing traffic to this service by domain name.
-    ports:
-      - "52931:5000"
+    restart: always
+    networks:
+      - external_access
     volumes:
       - counter-data:/app/data
-    networks:
-      - traefik
+    ports:
+      - "52931:5000"
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.password-generator.rule=Host(`passwords.yourdomain.com`)"
-      - "traefik.http.routers.password-generator.entrypoints=websecure"
-      - "traefik.http.routers.password-generator.tls.certresolver=letsencrypt"
-      - "traefik.http.services.password-generator.loadbalancer.server.port=5000"
-
-networks:
-  traefik:
-    external: true
-    # This must match the name of the docker network your Traefik
-    # container is attached to. Find it with: docker network ls
+      - traefik.enable=true
+      - traefik.http.routers.lykilord.rule=Host(`lykilord.runr.is`)
+      - traefik.http.services.lykilord.loadbalancer.server.port=5000
+      - traefik.http.routers.lykilord-https.tls=true
+      - traefik.http.routers.lykilord-https.tls.certresolver=cloudflare
+      - traefik.http.routers.lykilord-https.rule=Host(`lykilord.runr.is`)
 
 volumes:
   counter-data:
