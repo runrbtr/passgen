@@ -4,8 +4,8 @@ networks:
 
 services:
   password-generator:
-    build: .
-#    container_name: password-generator
+    image: ghcr.io/runrbtr/passgen:latest
+    container_name: password-generator
     restart: always
     networks:
       - external_access
